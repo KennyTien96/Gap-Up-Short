@@ -1,19 +1,24 @@
 from PIL import Image
 from Eagle_Functions import *
+from dotenv import load_dotenv
 import pytesseract
 import re
 import requests
 import os
+import math
 
-folder_path = r"C:\Users\Game-Rm\Downloads\GUS copy unsorted\GUS copy unsorted"
+load_dotenv()
+folder_path = os.getenv("FOLDER_PATH")
 
 try:
-    items = fetch_item_list()
+    # items = fetch_item_list()
+    items = fetch_all_items_excluding_partial_tag('gap') 
 
     # Extract and print only ID and name
     for idx, item in enumerate(items, start=1):
         id = item['id']
         name = item['name']
+        item_tags = item['tags']
         print(f"{idx}. ID: {id}, Name: {name}")
 
         # Load image
@@ -26,7 +31,7 @@ try:
         img = Image.open(full_path)
         width, height = img.size
 
-        # Crop right panel (right 50% of the image)
+        # Crop right panel (right 55% of the image)
         right_crop = img.crop((int(width * 0.55), 0, width, height))
 
         # Run OCR on the cropped image
@@ -42,10 +47,14 @@ try:
         if gap_value_match:
             print("📈 Gap Value:", gap_value_match.group(1), "%")
             gap_value = float(gap_value_match.group(1))
+            gap_value = math.floor(gap_value)
+
             tag = get_gap_tag(gap_value)
-            update_item_tags(id, tag)
+            update_item_tags(id, tag, item_tags)
+
         else:
             print("❌ Gap Value not found.")
+            update_item_tags(id, "no_gap_data", item_tags)
 
 except requests.exceptions.RequestException as e:
     print("Error:", e)
