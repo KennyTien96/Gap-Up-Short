@@ -1,12 +1,18 @@
 import requests
 import json
 
+#--------------------------------------------------------------------------------------------------------------------#
+
 # Eagle API call that gets list of all items
-def fetch_item_list():
+
+def fetch_item_list(tags=None):
     url = "http://localhost:41595/api/item/list"
     params = {
-        "limit": 20
+        "limit": 20,
     }
+
+    if tags is not None:
+        params["tags"] = tags
 
     try:
         response = requests.get(url, params=params, allow_redirects=True)
@@ -17,16 +23,59 @@ def fetch_item_list():
     except requests.exceptions.RequestException as e:
         print("Error:", e)
         return None
+    
+#--------------------------------------------------------------------------------------------------------------------#
+
+# Eagle API call that gets list of all the items excluding the tags
+
+def fetch_all_items_excluding_partial_tag(exclude_substring):
+    url = "http://localhost:41595/api/item/list"
+    limit = 200
+    offset = 0
+    all_items = []
+
+    while True:
+        params = {
+            "limit": limit,
+            "offset": offset
+        }
+
+        try:
+            response = requests.get(url, params=params, allow_redirects=True)
+            response.raise_for_status()
+            data = response.json().get('data', [])
+
+            if not data:
+                break
+
+            # Exclude items where any tag contains the substring 
+            filtered_data = [
+                item for item in data
+                if not any(exclude_substring in tag for tag in item.get('tags', []))
+            ]
+            all_items.extend(filtered_data)
+
+            offset += 1  # Go to the next batch
+
+        except requests.exceptions.RequestException as e:
+            print("Error:", e)
+            break
+
+    return all_items
+
+#--------------------------------------------------------------------------------------------------------------------#
 
 # Eagle API call that will update/tag item
-def update_item_tags(item_id, tags):
+
+def update_item_tags(item_id, tags, item_tags):
     url = "http://localhost:41595/api/item/update"
     headers = {
         "Content-Type": "application/json"
     }
+    item_tags.append(tags)
     data = {
         "id": item_id,
-        "tags": [tags]
+        "tags": item_tags
     }
 
     try:
@@ -39,8 +88,11 @@ def update_item_tags(item_id, tags):
     except requests.exceptions.RequestException as e:
         print("❌ Error updating item:", e)
         return None
-    
+
+#--------------------------------------------------------------------------------------------------------------------#
+
 # Function that loops through gap values and tags it
+
 def get_gap_tag(gap_value):
     ranges = [
         (50, 59, "gap_50"),
@@ -58,3 +110,4 @@ def get_gap_tag(gap_value):
             return tag
     return "no_gap_data"
 
+#--------------------------------------------------------------------------------------------------------------------#
