@@ -12,11 +12,12 @@ try:
 
     # Extract and print only ID and name
     for idx, item in enumerate(items, start=1):
-        print(f"{idx}. ID: {item['id']}, Name: {item['name']}")
         id = item['id']
+        name = item['name']
+        print(f"{idx}. ID: {id}, Name: {name}")
 
         # Load image
-        filename = item['name'] + ".png"
+        filename = name + ".png"
 
         # Join the path and filename
         full_path = os.path.join(folder_path, filename)
@@ -41,7 +42,6 @@ try:
         if gap_value_match:
             print("📈 Gap Value:", gap_value_match.group(1), "%")
             gap_value = float(gap_value_match.group(1))
-            
             tag = get_gap_tag(gap_value)
             update_item_tags(id, tag)
         else:
