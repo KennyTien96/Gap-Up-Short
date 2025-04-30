@@ -33,7 +33,8 @@ def update_item_tags(item_id, tags):
         response = requests.post(url, data=json.dumps(data), headers=headers, allow_redirects=True)
         response.raise_for_status()
         result = response.json()
-        print("✅ Update successful:", result)
+        data = result['data']
+        print("✅ Update successful:", f"ID: {data['id']}, Name: {data['name']}, Tags: {data.get('tags', [])}")
         return result
     except requests.exceptions.RequestException as e:
         print("❌ Error updating item:", e)
