@@ -3,21 +3,15 @@ from Eagle_Functions import *
 import pytesseract
 import re
 import requests
-import json
 import os
 
-# retrive the list of all images in Eagle library
-url_list = "http://localhost:41595/api/item/list"
 folder_path = r"C:\Users\Game-Rm\Downloads\GUS copy unsorted\GUS copy unsorted"
-params = {
-    "limit": 20
-}
+
 try:
-    response = requests.get(url_list, params=params, allow_redirects=True)
-    response.raise_for_status()  # Raises HTTPError for bad responses (4xx and 5xx)
-    data = response.json()
+    items = fetch_item_list()
+
     # Extract and print only ID and name
-    for idx, item in enumerate(data['data'], start=1):
+    for idx, item in enumerate(items, start=1):
         print(f"{idx}. ID: {item['id']}, Name: {item['name']}")
         id = item['id']
 
@@ -49,7 +43,9 @@ try:
             gap_value = float(gap_value_match.group(1))
             
             tag = get_gap_tag(gap_value)
-            update_item_tags(id, [tag])
+            update_item_tags(id, tag)
+        else:
+            print("❌ Gap Value not found.")
 
 except requests.exceptions.RequestException as e:
     print("Error:", e)

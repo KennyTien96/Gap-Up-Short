@@ -1,6 +1,23 @@
 import requests
 import json
 
+# Eagle API call that gets list of all items
+def fetch_item_list():
+    url = "http://localhost:41595/api/item/list"
+    params = {
+        "limit": 20
+    }
+
+    try:
+        response = requests.get(url, params=params, allow_redirects=True)
+        response.raise_for_status()
+        data = response.json()
+        return data['data']  # Return the list of items if needed
+    
+    except requests.exceptions.RequestException as e:
+        print("Error:", e)
+        return None
+
 # Eagle API call that will update/tag item
 def update_item_tags(item_id, tags):
     url = "http://localhost:41595/api/item/update"
