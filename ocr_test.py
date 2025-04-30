@@ -1,3 +1,7 @@
+from PIL import Image
+import pytesseract
+import re
+
 # Load image
 img = Image.open("CleanShot 2025-04-11 at 10.00.24@2x.png")
 width, height = img.size
