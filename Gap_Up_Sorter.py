@@ -48,27 +48,8 @@ try:
             print("📈 Gap Value:", gap_value_match.group(1), "%")
             gap_value = float(gap_value_match.group(1))
             
-            if 50 <= gap_value <= 59:   
-                update_item_tags(id, "gap_50")
-            elif 60 <= gap_value <= 69:   
-                update_item_tags(id, "gap_60")   
-            elif 70 <= gap_value <= 79:
-                update_item_tags(id, "gap_70")
-            elif 80 <= gap_value <= 89:
-                update_item_tags(id, "gap_80")
-            elif 90 <= gap_value <= 99:
-                update_item_tags(id, "gap_90")
-            elif 100 <= gap_value <= 150:
-                update_item_tags(id, "gap_100_150")
-            elif 151 <= gap_value <= 200:
-                update_item_tags(id, "gap_150_200")
-            elif 201 <= gap_value:
-                update_item_tags(id, "gap_200+")
-            else:
-                update_item_tags(id, "no_gap_data")
-
-        else:
-            print("❌ Gap Value not found.")
+            tag = get_gap_tag(gap_value)
+            update_item_tags(id, [tag])
 
 except requests.exceptions.RequestException as e:
     print("Error:", e)
