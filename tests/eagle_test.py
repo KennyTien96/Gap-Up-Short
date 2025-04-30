@@ -27,20 +27,21 @@ import json
 
 # Getting the list of all images in Eagle library
 
-# url = "http://localhost:41595/api/item/list"
-# params = {
+url = "http://localhost:41595/api/item/list"
+params = {
+    "limit": 200,
+    "offset": 0  
+}
 
-# }
-
-# try:
-#     response = requests.get(url, params=params, allow_redirects=True)
-#     response.raise_for_status()  # Raises HTTPError for bad responses (4xx and 5xx)
-#     data = response.json()
-#     # Extract and print only ID and name
-#     for idx, item in enumerate(data['data'], start=1):
-#         print(f"{idx}. ID: {item['id']}, Name: {item['name']}")
-# except requests.exceptions.RequestException as e:
-#     print("Error:", e)
+try:
+    response = requests.get(url, params=params, allow_redirects=True)
+    response.raise_for_status()  # Raises HTTPError for bad responses (4xx and 5xx)
+    data = response.json()
+    # Extract and print only ID and name
+    for idx, item in enumerate(data['data'], start=1):
+        print(f"{idx}. ID: {item['id']}, Name: {item['name']}, Tags: {item['tags']}")
+except requests.exceptions.RequestException as e:
+    print("Error:", e)
 
 
 #-----------------------------------------------------------------------------------------------#
@@ -70,12 +71,12 @@ import json
 
 # Getting list of folders
 
-url = "http://localhost:41595/api/folder/list"
+# url = "http://localhost:41595/api/folder/list"
 
-try:
-    response = requests.get(url, allow_redirects=True)
-    response.raise_for_status()  # Raise an exception for HTTP errors
-    result = response.json()
-    print(result)
-except requests.exceptions.RequestException as error:
-    print("error", error)
+# try:
+#     response = requests.get(url, allow_redirects=True)
+#     response.raise_for_status()  # Raise an exception for HTTP errors
+#     result = response.json()
+#     print(result)
+# except requests.exceptions.RequestException as error:
+#     print("error", error)
