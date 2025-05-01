@@ -42,6 +42,9 @@ try:
         # Processes gap value and updates item with appropriate tag
         process_gap_value(ocr_text, id, item_tags)
 
+        # Processes premarket volume and updates item with appropriate tag
+        # process_premarket_volume(ocr_text, id, item_tags)
+
 except requests.exceptions.RequestException as e:
     print("Error:", e)
 

@@ -93,7 +93,7 @@ def process_premarket_volume(ocr_text, id, item_tags):
     premarket_volume_match = re.search(r"Premarket Volume\s*([\d.,]+)\s*([KM]?)", ocr_text)
 
     if premarket_volume_match:
-        print("📈 Premarket Volume:", premarket_volume_match.group(1), "%")
+        print("📈 Premarket Volume:", premarket_volume_match.group(1), premarket_volume_match.group(2))
         premarket_volume = float(premarket_volume_match.group(1)) # group(1) of the match would be the number of the volume
         premarket_volume = math.floor(premarket_volume)
         volume_scale = premarket_volume_match.group(2) # group(2) of the match would be 'K' or 'M' of the volume
@@ -103,7 +103,7 @@ def process_premarket_volume(ocr_text, id, item_tags):
         update_item_tags(id, tag, item_tags)
     else:
         print("❌ Premarket Volume not found.")
-        update_item_tags(id, "no_gap_data", item_tags)
+        update_item_tags(id, "no_PMV_data", item_tags)
 
 #--------------------------------------------------------------------------------------------------------------------#
 
@@ -167,12 +167,14 @@ def get_premarket_volume_tag(premarket_volume, volume_scale):
         (31, float("inf"), "PMV 31+"),
     ]
     if volume_scale == 'K':
-        tag = 'PMV < 1M'
-        return tag
-
+        return 'PMV < 1M'
+        
     for lower, upper, tag in ranges:
         if lower <= premarket_volume <= upper:
             return tag
-    return "no_volume_data"
+        
+    return "no_PMV_data"
+
+#--------------------------------------------------------------------------------------------------------------------#
 
 
