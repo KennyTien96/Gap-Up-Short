@@ -1,6 +1,7 @@
 from PIL import Image
 import pytesseract
 import re
+import math
 
 # Load image
 img = Image.open("tests/CleanShot 2025-04-11 at 10.00.24@2x.png")
@@ -18,7 +19,7 @@ print("Full OCR Text:\n", ocr_text)
 # Extract Volume and Gap Value using regex
 # volume_match = re.search(r"Volume\s*([\d.]+)\s*M", ocr_text)
 gap_value_match = re.search(r"Gap Value\s*([\d.]+)\s*%", ocr_text)
-premarket_volume_match = re.search(r"Premarket Volume\s*([\d.]+)", ocr_text)
+premarket_volume_match = re.search(r"Premarket Volume\s*([\d.,]+)\s*([KM]?)", ocr_text)
 
 # Output results
 # if volume_match:
@@ -32,7 +33,10 @@ else:
     print("❌ Gap Value not found.")
 
 if premarket_volume_match:
-    print("📊 Premarket Volume:", premarket_volume_match.group(1), "M")
+    # premarket_volume = float(premarket_volume_match.group(1))
+    # premarket_volume = math.floor(premarket_volume)
+    print("📊 Premarket Volume:", premarket_volume_match.group(1))
+
 else:
     print("❌ Premarket Volume not found.")
 

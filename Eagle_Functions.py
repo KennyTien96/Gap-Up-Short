@@ -86,6 +86,27 @@ def process_gap_value(ocr_text, id, item_tags):
 
 #--------------------------------------------------------------------------------------------------------------------#
 
+# Function that processes the premarket volume 
+
+def process_premarket_volume(ocr_text, id, item_tags):
+    # Extract Premarket Volume using regex
+    premarket_volume_match = re.search(r"Premarket Volume\s*([\d.,]+)\s*([KM]?)", ocr_text)
+
+    if premarket_volume_match:
+        print("📈 Premarket Volume:", premarket_volume_match.group(1), "%")
+        premarket_volume = float(premarket_volume_match.group(1)) # group(1) of the match would be the number of the volume
+        premarket_volume = math.floor(premarket_volume)
+        volume_scale = premarket_volume_match.group(2) # group(2) of the match would be 'K' or 'M' of the volume
+
+        tag = get_premarket_volume_tag(premarket_volume, volume_scale)
+       
+        update_item_tags(id, tag, item_tags)
+    else:
+        print("❌ Premarket Volume not found.")
+        update_item_tags(id, "no_gap_data", item_tags)
+
+#--------------------------------------------------------------------------------------------------------------------#
+
 # Eagle API call that will update/tag item
 
 def update_item_tags(item_id, tags, item_tags):
@@ -132,5 +153,26 @@ def get_gap_tag(gap_value):
     return "no_gap_data"
 
 #--------------------------------------------------------------------------------------------------------------------#
+
+# Function that loops through premarket volume values and tags it
+
+def get_premarket_volume_tag(premarket_volume, volume_scale):
+    ranges = [
+        (1, 5, "PMV 1-5 M"),
+        (6, 10, "PMV 6-10 M"),
+        (11, 15, "PMV 11-15 M"),
+        (16, 20, "PMV 16-20 M"),     
+        (21, 25, "PMV 21-25 M"),
+        (26, 30, "PMV 26-30 M"),
+        (31, float("inf"), "PMV 31+"),
+    ]
+    if volume_scale == 'K':
+        tag = 'PMV < 1M'
+        return tag
+
+    for lower, upper, tag in ranges:
+        if lower <= premarket_volume <= upper:
+            return tag
+    return "no_volume_data"
 
 
