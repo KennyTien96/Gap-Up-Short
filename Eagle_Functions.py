@@ -1,5 +1,7 @@
 import requests
 import json
+import re
+import math
 
 #--------------------------------------------------------------------------------------------------------------------#
 
@@ -65,6 +67,25 @@ def fetch_all_items_excluding_partial_tag(exclude_substring):
 
 #--------------------------------------------------------------------------------------------------------------------#
 
+# Function that processes the gap value
+
+def process_gap_value(ocr_text, id, item_tags):
+    # Extract Gap Value using regex
+    gap_value_match = re.search(r"Gap Value\s*([\d.]+)\s*%", ocr_text)
+
+    if gap_value_match:
+        print("📈 Gap Value:", gap_value_match.group(1), "%")
+        gap_value = float(gap_value_match.group(1))
+        gap_value = math.floor(gap_value)
+
+        tag = get_gap_tag(gap_value)
+        update_item_tags(id, tag, item_tags)
+    else:
+        print("❌ Gap Value not found.")
+        update_item_tags(id, "no_gap_data", item_tags)
+
+#--------------------------------------------------------------------------------------------------------------------#
+
 # Eagle API call that will update/tag item
 
 def update_item_tags(item_id, tags, item_tags):
@@ -111,3 +132,5 @@ def get_gap_tag(gap_value):
     return "no_gap_data"
 
 #--------------------------------------------------------------------------------------------------------------------#
+
+

@@ -2,10 +2,9 @@ from PIL import Image
 from Eagle_Functions import *
 from dotenv import load_dotenv
 import pytesseract
-import re
 import requests
 import os
-import math
+
 
 load_dotenv()
 folder_path = os.getenv("FOLDER_PATH")
@@ -40,21 +39,8 @@ try:
         # Print OCR results for reference
         # print("Full OCR Text:\n", ocr_text)
 
-        # Extract Gap Value using regex
-        gap_value_match = re.search(r"Gap Value\s*([\d.]+)\s*%", ocr_text)
-
-        # Output results
-        if gap_value_match:
-            print("📈 Gap Value:", gap_value_match.group(1), "%")
-            gap_value = float(gap_value_match.group(1))
-            gap_value = math.floor(gap_value)
-
-            tag = get_gap_tag(gap_value)
-            update_item_tags(id, tag, item_tags)
-
-        else:
-            print("❌ Gap Value not found.")
-            update_item_tags(id, "no_gap_data", item_tags)
+        # Processes gap value and updates item with appropriate tag
+        process_gap_value(ocr_text, id, item_tags)
 
 except requests.exceptions.RequestException as e:
     print("Error:", e)
