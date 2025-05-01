@@ -137,6 +137,7 @@ def update_item_tags(item_id, tags, item_tags):
 
 def get_gap_tag(gap_value):
     ranges = [
+        (40, 49, "gap_40"),
         (50, 59, "gap_50"),
         (60, 69, "gap_60"),
         (70, 79, "gap_70"),
