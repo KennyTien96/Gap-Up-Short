@@ -3,7 +3,7 @@ import pytesseract
 import re
 
 # Load image
-img = Image.open("CleanShot 2025-04-11 at 10.00.24@2x.png")
+img = Image.open("tests/CleanShot 2025-04-11 at 10.00.24@2x.png")
 width, height = img.size
 
 # Crop right panel (right 50% of the image)
@@ -18,6 +18,7 @@ print("Full OCR Text:\n", ocr_text)
 # Extract Volume and Gap Value using regex
 # volume_match = re.search(r"Volume\s*([\d.]+)\s*M", ocr_text)
 gap_value_match = re.search(r"Gap Value\s*([\d.]+)\s*%", ocr_text)
+premarket_volume_match = re.search(r"Premarket Volume\s*([\d.]+)", ocr_text)
 
 # Output results
 # if volume_match:
@@ -29,3 +30,9 @@ if gap_value_match:
     print("📈 Gap Value:", gap_value_match.group(1), "%")
 else:
     print("❌ Gap Value not found.")
+
+if premarket_volume_match:
+    print("📊 Premarket Volume:", premarket_volume_match.group(1), "M")
+else:
+    print("❌ Premarket Volume not found.")
+
