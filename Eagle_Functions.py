@@ -81,7 +81,6 @@ def process_gap_value(ocr_text, id, item_tags):
         tag = get_gap_tag(gap_value)
         update_item_tags(id, tag, item_tags)
     else:
-        print("❌ Gap Value not found.")
         update_item_tags(id, "no_gap_data", item_tags)
 
 #--------------------------------------------------------------------------------------------------------------------#
@@ -102,7 +101,6 @@ def process_premarket_volume(ocr_text, id, item_tags):
        
         update_item_tags(id, tag, item_tags)
     else:
-        print("❌ Premarket Volume not found.")
         update_item_tags(id, "no_PMV_data", item_tags)
 
 #--------------------------------------------------------------------------------------------------------------------#

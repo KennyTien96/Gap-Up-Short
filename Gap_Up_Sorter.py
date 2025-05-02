@@ -7,16 +7,18 @@ import pytesseract
 import requests
 import os
 import time
+import threading
 
 load_dotenv()
 folder_path = os.getenv("FOLDER_PATH")
 
-def process_item(item):
+def process_item(item, total_count, progress_bar):
     id = item['id']
     name = item['name']
     item_tags = item['tags']
 
     try:
+        # Loading and processing image through OCR 
         filename = name + ".png"
         full_path = os.path.join(folder_path, filename)
 
@@ -24,22 +26,37 @@ def process_item(item):
         width, height = img.size
         right_crop = img.crop((int(width * 0.55), 0, width, height))
 
-        ocr_text = pytesseract.image_to_string(right_crop, config='--psm 6')
+        ocr_text = pytesseract.image_to_string(right_crop, config='--psm 3')
 
-        process_gap_value(ocr_text, id, item_tags)
-        # process_premarket_volume(ocr_text, id, item_tags)
+        #-----------------------------------------------------------------------------------#
+
+        # Add process function for desired tag here :
+
+        # process_gap_value(ocr_text, id, item_tags)
+        process_premarket_volume(ocr_text, id, item_tags)
+
+        #-----------------------------------------------------------------------------------#
+
+        progress_bar.set_postfix({"Processing": f"{progress_bar.n}/{total_count}"})
+        progress_bar.update(1)
 
     except Exception as e:
         print(f"❌ Error processing {name}: {e}")
+        progress_bar.update(1)
 
 def main():
     try:
-        items = fetch_all_items_excluding_partial_tag('gap')
+        items = fetch_all_items_excluding_partial_tag('PMV') # <----- Update string to whatever tag you want filtered out when fetching list
         total_count = len(items)
         start_time = time.time()
 
-        with ThreadPoolExecutor(max_workers=6) as executor:
-            list(tqdm(executor.map(process_item, items), total=total_count, desc="🔄 Processing"))
+        # Set up the tqdm lock for thread safety
+        tqdm.set_lock(threading.Lock())
+
+        with tqdm(total=total_count, desc="Processing Items", ncols=100, position=0, dynamic_ncols=True) as progress_bar:
+            with ThreadPoolExecutor(max_workers=6) as executor:
+                for count, item in enumerate(items, 1):
+                    executor.submit(process_item, item, total_count, progress_bar)
 
         elapsed_time = time.time() - start_time
         print(f"\n✅ Completed processing {total_count} items in {elapsed_time:.2f} seconds.")
