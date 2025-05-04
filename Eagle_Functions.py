@@ -74,14 +74,13 @@ def process_gap_value(ocr_text, id, item_tags):
     gap_value_match = re.search(r"Gap Value\s*([\d.]+)\s*%", ocr_text)
 
     if gap_value_match:
-        print("📈 Gap Value:", gap_value_match.group(1), "%")
+        print("Gap Value:", gap_value_match.group(1), "%")
         gap_value = float(gap_value_match.group(1))
         gap_value = math.floor(gap_value)
 
         tag = get_gap_tag(gap_value)
         update_item_tags(id, tag, item_tags)
     else:
-        print("❌ Gap Value not found.")
         update_item_tags(id, "no_gap_data", item_tags)
 
 #--------------------------------------------------------------------------------------------------------------------#
@@ -93,7 +92,7 @@ def process_premarket_volume(ocr_text, id, item_tags):
     premarket_volume_match = re.search(r"Premarket Volume\s*([\d.,]+)\s*([KM]?)", ocr_text)
 
     if premarket_volume_match:
-        print("📈 Premarket Volume:", premarket_volume_match.group(1), premarket_volume_match.group(2))
+        print("Premarket Volume:", premarket_volume_match.group(1), premarket_volume_match.group(2))
         premarket_volume = float(premarket_volume_match.group(1)) # group(1) of the match would be the number of the volume
         premarket_volume = math.floor(premarket_volume)
         volume_scale = premarket_volume_match.group(2) # group(2) of the match would be 'K' or 'M' of the volume
@@ -102,7 +101,6 @@ def process_premarket_volume(ocr_text, id, item_tags):
        
         update_item_tags(id, tag, item_tags)
     else:
-        print("❌ Premarket Volume not found.")
         update_item_tags(id, "no_PMV_data", item_tags)
 
 #--------------------------------------------------------------------------------------------------------------------#
@@ -137,6 +135,7 @@ def update_item_tags(item_id, tags, item_tags):
 
 def get_gap_tag(gap_value):
     ranges = [
+        (40, 49, "gap_40"),
         (50, 59, "gap_50"),
         (60, 69, "gap_60"),
         (70, 79, "gap_70"),

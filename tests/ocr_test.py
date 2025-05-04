@@ -2,9 +2,20 @@ from PIL import Image
 import pytesseract
 import re
 import math
+import sys
+import os
+
+# Dynamically add the parent directory to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
+# Try importing now
+from Eagle_Functions import *
 
 # Load image
-img = Image.open("tests/CleanShot 2025-04-11 at 10.00.24@2x.png")
+img = Image.open("tests/Gap_Up_Short 2025-04-28 at 08.44.43@2x.png")
 width, height = img.size
 
 # Crop right panel (right 50% of the image)
@@ -27,16 +38,18 @@ premarket_volume_match = re.search(r"Premarket Volume\s*([\d.,]+)\s*([KM]?)", oc
 # else:
 #     print("❌ Volume not found.")
 
-if gap_value_match:
-    print("📈 Gap Value:", gap_value_match.group(1), "%")
-else:
-    print("❌ Gap Value not found.")
+# if gap_value_match:
+#     print("📈 Gap Value:", gap_value_match.group(1), "%")
+# else:
+#     print("❌ Gap Value not found.")
 
-if premarket_volume_match:
-    # premarket_volume = float(premarket_volume_match.group(1))
-    # premarket_volume = math.floor(premarket_volume)
-    print("📊 Premarket Volume:", premarket_volume_match.group(1))
+# if premarket_volume_match:
+#     # premarket_volume = float(premarket_volume_match.group(1))
+#     # premarket_volume = math.floor(premarket_volume)
+#     print("📊 Premarket Volume:", premarket_volume_match.group(1))
 
-else:
-    print("❌ Premarket Volume not found.")
+# else:
+#     print("❌ Premarket Volume not found.")
 
+# print(fetch_item_list('test'))
+process_premarket_volume(ocr_text, 'MA4YFRD2JHED3', ['test'])

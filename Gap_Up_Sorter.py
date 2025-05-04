@@ -1,56 +1,68 @@
 from PIL import Image
 from Eagle_Functions import *
 from dotenv import load_dotenv
+from concurrent.futures import ThreadPoolExecutor
+from tqdm import tqdm
 import pytesseract
 import requests
 import os
-
+import time
+import threading
 
 load_dotenv()
 folder_path = os.getenv("FOLDER_PATH")
 
-try:
-    # items = fetch_item_list()
-    items = fetch_all_items_excluding_partial_tag('gap') 
+def process_item(item, total_count, progress_bar):
+    id = item['id']
+    name = item['name']
+    item_tags = item['tags']
 
-    # Extract and print only ID and name
-    for idx, item in enumerate(items, start=1):
-        id = item['id']
-        name = item['name']
-        item_tags = item['tags']
-        print(f"{idx}. ID: {id}, Name: {name}")
-
-        # Load image
+    try:
+        # Loading and processing image through OCR 
         filename = name + ".png"
-
-        # Join the path and filename
         full_path = os.path.join(folder_path, filename)
 
-        # Open the image
         img = Image.open(full_path)
         width, height = img.size
-
-        # Crop right panel (right 55% of the image)
         right_crop = img.crop((int(width * 0.55), 0, width, height))
 
-        # Run OCR on the cropped image
         ocr_text = pytesseract.image_to_string(right_crop, config='--psm 3')
 
-        # Print OCR results for reference
-        # print("Full OCR Text:\n", ocr_text)
+        #-----------------------------------------------------------------------------------#
 
-        # Processes gap value and updates item with appropriate tag
-        process_gap_value(ocr_text, id, item_tags)
+        # Add process function for desired tag here :
 
-        # Processes premarket volume and updates item with appropriate tag
-        # process_premarket_volume(ocr_text, id, item_tags)
+        # process_gap_value(ocr_text, id, item_tags)
+        process_premarket_volume(ocr_text, id, item_tags)
 
-except requests.exceptions.RequestException as e:
-    print("Error:", e)
+        #-----------------------------------------------------------------------------------#
 
+        progress_bar.set_postfix({"Processing": f"{progress_bar.n}/{total_count}"})
+        progress_bar.update(1)
 
+    except Exception as e:
+        print(f"❌ Error processing {name}: {e}")
+        progress_bar.update(1)
 
+def main():
+    try:
+        items = fetch_all_items_excluding_partial_tag('PMV') # <----- Update string to whatever tag you want filtered out when fetching list
+        total_count = len(items)
+        start_time = time.time()
 
+        # Set up the tqdm lock for thread safety
+        tqdm.set_lock(threading.Lock())
 
+        with tqdm(total=total_count, desc="Processing Items", ncols=100, position=0, dynamic_ncols=True) as progress_bar:
+            with ThreadPoolExecutor(max_workers=6) as executor:
+                for count, item in enumerate(items, 1):
+                    executor.submit(process_item, item, total_count, progress_bar)
 
+        elapsed_time = time.time() - start_time
+        print(f"\n✅ Completed processing {total_count} items in {elapsed_time:.2f} seconds.")
 
+    except requests.exceptions.RequestException as e:
+        print("Error:", e)
+
+if __name__ == "__main__":
+    main()
