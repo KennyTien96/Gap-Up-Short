@@ -30,7 +30,7 @@ width, height = img.size
 right_crop = img.crop((int(width * 0.10), 0, width, height))
 
 # Run OCR on the cropped image
-ocr_text = pytesseract.image_to_string(right_crop, config='--psm 6')
+ocr_text = pytesseract.image_to_string(right_crop, config='--psm 3')
 
 # Print OCR results for reference
 print("Full OCR Text:\n", ocr_text)
