@@ -2,6 +2,7 @@ from PIL import Image
 import pytesseract
 import sys
 import os
+import yfinance as yf
 
 # Dynamically add the parent directory to sys.path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -49,3 +50,9 @@ else:
     print("❌ Symbol not found.")
 
 #-----------------------------------------------------------------------------------------------------#
+symbols = [symbol_match.group(1)]
+
+for symbol in symbols:
+    stock = yf.Ticker(symbol)
+    info = stock.info
+    print(f"{symbol} - Sector: {info.get('sector')}, Industry: {info.get('industry')}")
