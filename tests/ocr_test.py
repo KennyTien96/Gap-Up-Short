@@ -15,24 +15,34 @@ if parent_dir not in sys.path:
 from Eagle_Functions import *
 
 # Load image
-img = Image.open("tests/Gap_Up_Short 2025-04-28 at 08.44.43@2x.png")
+img = Image.open("tests/Gap_Up_Short 2025-04-27 at 22.38.51@2x.png")
 width, height = img.size
 
 # Crop right panel (right 50% of the image)
 right_crop = img.crop((int(width * 0.55), 0, width, height))
 
 # Run OCR on the cropped image
-ocr_text = pytesseract.image_to_string(right_crop, config='--psm 3')
+ocr_text = pytesseract.image_to_string(right_crop, config='--psm 6')
 
 # Print OCR results for reference
 print("Full OCR Text:\n", ocr_text)
 
+#-----------------------------------------------------------------------------------------------------#
+
 # Extract Volume and Gap Value using regex
+
 # volume_match = re.search(r"Volume\s*([\d.]+)\s*M", ocr_text)
-gap_value_match = re.search(r"Gap Value\s*([\d.]+)\s*%", ocr_text)
-premarket_volume_match = re.search(r"Premarket Volume\s*([\d.,]+)\s*([KM]?)", ocr_text)
+
+# gap_value_match = re.search(r"Gap Value\s*([\d.]+)\s*%", ocr_text)
+
+# premarket_volume_match = re.search(r"Premarket Volume\s*([\d.,]+)\s*([KM]?)", ocr_text)
+
+market_cap_match = re.search(r"Market Cap\s*\$?\s*([\d,.]+)\s*([MK]?)", ocr_text)
+
+#-----------------------------------------------------------------------------------------------------#
 
 # Output results
+
 # if volume_match:
 #     print("📊 Volume:", volume_match.group(1), "M")
 # else:
@@ -51,5 +61,13 @@ premarket_volume_match = re.search(r"Premarket Volume\s*([\d.,]+)\s*([KM]?)", oc
 # else:
 #     print("❌ Premarket Volume not found.")
 
+if market_cap_match:
+    print("Market Cap:", market_cap_match.group(1), market_cap_match.group(2))
+else:
+    print("❌ Market Cap not found.")
+
+
+#-----------------------------------------------------------------------------------------------------#
+
 # print(fetch_item_list('test'))
-process_premarket_volume(ocr_text, 'MA4YFRD2JHED3', ['test'])
+# process_premarket_volume(ocr_text, 'MA4YFRD2JHED3', ['test'])

@@ -26,14 +26,17 @@ def process_item(item, total_count, progress_bar):
         width, height = img.size
         right_crop = img.crop((int(width * 0.55), 0, width, height))
 
-        ocr_text = pytesseract.image_to_string(right_crop, config='--psm 3')
+        ocr_text = pytesseract.image_to_string(right_crop, config='--psm 6') #psm 3 for premarket volumen and gap value processing, psm 6 for market cap processing
 
         #-----------------------------------------------------------------------------------#
 
         # Add process function for desired tag here :
 
         # process_gap_value(ocr_text, id, item_tags)
-        process_premarket_volume(ocr_text, id, item_tags)
+
+        # process_premarket_volume(ocr_text, id, item_tags)
+
+        process_market_cap(ocr_text, id, item_tags)
 
         #-----------------------------------------------------------------------------------#
 
@@ -46,7 +49,7 @@ def process_item(item, total_count, progress_bar):
 
 def main():
     try:
-        items = fetch_all_items_excluding_partial_tag('PMV') # <----- Update string to whatever tag you want filtered out when fetching list
+        items = fetch_all_items_excluding_partial_tag('MC') # <----- Update string to whatever tag you want filtered out when fetching list
         total_count = len(items)
         start_time = time.time()
 
