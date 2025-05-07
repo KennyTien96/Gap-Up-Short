@@ -176,4 +176,47 @@ def get_premarket_volume_tag(premarket_volume, volume_scale):
 
 #--------------------------------------------------------------------------------------------------------------------#
 
+# Function that loops through market cap values and tags it
+
+def get_market_cap_tag(market_cap, market_cap_scale):
+    ranges = [
+        (1, 9, "MC < 10"),
+        (10, 29, "MC 10 - 30"),
+        (30, 49, "MC 30 - 50"),
+        (50, 99, "MC > 50"),
+        (100, 199, "MC > 100"),
+        (200, float("inf"), "MC > 200"),
+    ]
+
+    if market_cap_scale == 'K':
+        return 'MC < 10'
+        
+    for lower, upper, tag in ranges:
+        if lower <= market_cap <= upper:
+            return tag
+        
+    return "no_MC_data"
+
+#--------------------------------------------------------------------------------------------------------------------#
+
+# Function that processes the market cap  
+
+def process_market_cap(ocr_text, id, item_tags):
+    # Extract market cap using regex
+    market_cap_match = re.search(r"Market Cap\s*\$?\s*([\d,.]+)\s*([MK]?)" , ocr_text)
+
+    if market_cap_match:
+        print("Market Cap :", market_cap_match.group(1), market_cap_match.group(2))
+        market_cap= float(market_cap_match.group(1)) # group(1) of the match would be the number of the market cap
+        market_cap = math.floor(market_cap)
+        market_cap_scale = market_cap_match.group(2) # group(2) of the match would be 'K' or 'M' of the market cap
+
+        tag = get_market_cap_tag(market_cap, market_cap_scale)
+       
+        update_item_tags(id, tag, item_tags)
+    else:
+        update_item_tags(id, "no_MC_data", item_tags)
+
+#--------------------------------------------------------------------------------------------------------------------#
+
 
