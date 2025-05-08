@@ -2,6 +2,7 @@ import requests
 import json
 import re
 import math
+import yfinance as yf
 
 #--------------------------------------------------------------------------------------------------------------------#
 
@@ -218,5 +219,36 @@ def process_market_cap(ocr_text, id, item_tags):
         update_item_tags(id, "no_MC_data", item_tags)
 
 #--------------------------------------------------------------------------------------------------------------------#
+
+# Function that processes the stock symbol and returns sector/industry   
+
+def process_stock_symbol(ocr_text, id, item_tags):
+    # Extract stock symbol using regex
+    symbol_match = re.search(r'\bS(\w+)\b', ocr_text)
+    symbol = symbol_match.group(1)
+
+    if symbol_match:
+        print("Market Cap :", symbol)
+
+        tag = get_symbol_sector_tag(symbol)
+        sector = tag.get('sector')
+        industry = tag.get('industry')
+        update_item_tags(id, sector, item_tags)
+    else:
+        update_item_tags(id, "no_MC_data", item_tags)
+
+#--------------------------------------------------------------------------------------------------------------------#
+
+# Function that tags the sector and industry 
+
+def get_symbol_sector_tag(symbol):
+
+        stock = yf.Ticker(symbol)
+        info = stock.info
+        print(f"{symbol} - Sector: {info.get('sector')}, Industry: {info.get('industry')}")
+        return info
+
+#--------------------------------------------------------------------------------------------------------------------#
+
 
 

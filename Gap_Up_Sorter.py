@@ -24,10 +24,20 @@ def process_item(item, total_count, progress_bar):
 
         img = Image.open(full_path)
         width, height = img.size
-        right_crop = img.crop((int(width * 0.55), 0, width, height))
 
-        ocr_text = pytesseract.image_to_string(right_crop, config='--psm 6') #psm 3 for premarket volumen and gap value processing, psm 6 for market cap processing
+        # Define the crop box for the top left portion that includes "$ONCO"
+        # This will be an approximate region (tweak as needed)
+        left = 0
+        top = 0
+        right = int(width * 0.25)
+        bottom = int(height * 0.08)
 
+        # Perform the crop
+        cropped_img = img.crop((left, top, right, bottom))
+        # cropped_img.show()
+
+        # Run OCR on the cropped image
+        ocr_text = pytesseract.image_to_string(cropped_img, config='--psm 7')
         #-----------------------------------------------------------------------------------#
 
         # Add process function for desired tag here :
@@ -36,7 +46,9 @@ def process_item(item, total_count, progress_bar):
 
         # process_premarket_volume(ocr_text, id, item_tags)
 
-        process_market_cap(ocr_text, id, item_tags)
+        # process_market_cap(ocr_text, id, item_tags)
+
+        process_stock_symbol(ocr_text, id, item_tags)
 
         #-----------------------------------------------------------------------------------#
 

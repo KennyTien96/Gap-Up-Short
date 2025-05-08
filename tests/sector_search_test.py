@@ -29,7 +29,7 @@ cropped_img = img.crop((left, top, right, bottom))
 # cropped_img.show()
 
 # Run OCR on the cropped image
-ocr_text = pytesseract.image_to_string(cropped_img, config='--psm 7') #psm 3 for premarket volume and gap value processing, psm 6 for market cap processing
+ocr_text = pytesseract.image_to_string(cropped_img, config='--psm 7') #psm 3 for premarket volume and gap value processing, psm 6 for market cap processing, psm7 for stock search
 
 # Print OCR results for reference
 print("Full OCR Text:\n", ocr_text)
