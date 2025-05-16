@@ -232,14 +232,18 @@ def process_stock_symbol(ocr_text, id, item_tags, search):
         tag = get_symbol_sector_tag(symbol)
         sector = tag.get('sector')
         industry = tag.get('industry')
-        country = "HQ_country_" + tag.get('country')
 
-        if search == 'sector':
-            update_item_tags(id, sector, item_tags)
-        elif search == 'country':
-            update_item_tags(id, country, item_tags)
+        if tag.get('country'):
+            country = "HQ_" + tag.get('country')
+            if search == 'sector':
+                update_item_tags(id, sector, item_tags)
+            elif search == 'country':
+                update_item_tags(id, country, item_tags)
+        else:
+            update_item_tags(id, "no_HQ_data", item_tags)
+            return  # Exit the function early if country is missing
     else:
-        update_item_tags(id, "no_country_data", item_tags)
+        update_item_tags(id, "no_HQ_data", item_tags)
 
 #--------------------------------------------------------------------------------------------------------------------#
 
