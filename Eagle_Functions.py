@@ -220,35 +220,40 @@ def process_market_cap(ocr_text, id, item_tags):
 
 #--------------------------------------------------------------------------------------------------------------------#
 
-# Function that processes the stock symbol and returns sector/industry   
+# Function that processes the stock symbol and returns sector/industry/country 
 
-def process_stock_symbol(ocr_text, id, item_tags):
+def process_stock_symbol(ocr_text, id, item_tags, search):
     # Extract stock symbol using regex
     symbol_match = re.search(r'\bS(\w+)\b', ocr_text)
-    symbol = symbol_match.group(1)
-
+    print(f'Symbol match variable : {symbol_match}')
+    
     if symbol_match:
-        print("Market Cap :", symbol)
-
+        symbol = symbol_match.group(1)
         tag = get_symbol_sector_tag(symbol)
         sector = tag.get('sector')
         industry = tag.get('industry')
-        update_item_tags(id, sector, item_tags)
+        country = "HQ_country_" + tag.get('country')
+
+        if search == 'sector':
+            update_item_tags(id, sector, item_tags)
+        elif search == 'country':
+            update_item_tags(id, country, item_tags)
     else:
-        update_item_tags(id, "no_MC_data", item_tags)
+        update_item_tags(id, "no_country_data", item_tags)
 
 #--------------------------------------------------------------------------------------------------------------------#
 
-# Function that tags the sector and industry 
+# Function that tags the sector and industry and country
 
 def get_symbol_sector_tag(symbol):
 
         stock = yf.Ticker(symbol)
         info = stock.info
-        print(f"{symbol} - Sector: {info.get('sector')}, Industry: {info.get('industry')}")
+        # print(f"{symbol} - Country: {info.get('country')}, Sector: {info.get('sector')}, Industry: {info.get('industry')}")
         return info
 
 #--------------------------------------------------------------------------------------------------------------------#
+
 
 
 

@@ -14,7 +14,7 @@ if parent_dir not in sys.path:
 from Eagle_Functions import *
 
 # Load image
-img = Image.open("tests/Gap_Up_Short 2025-04-28 at 08.44.43@2x.png")
+img = Image.open(r"C:\Users\Game-Rm\Downloads\GUS copy unsorted\GUS copy unsorted\CleanShot 2025-04-11 at 07.45.48@2x[conso ah].png")
 width, height = img.size
 
 # Define the crop box for the top left portion that includes "$ONCO"
@@ -55,4 +55,6 @@ symbols = [symbol_match.group(1)]
 for symbol in symbols:
     stock = yf.Ticker(symbol)
     info = stock.info
-    print(f"{symbol} - Sector: {info.get('sector')}, Industry: {info.get('industry')}")
+    # print(f"{symbol} - Sector: {info.get('sector')}, Industry: {info.get('industry')}")
+    print(f"{symbol} - Country: {info.get('country')}")
+    # print(info)

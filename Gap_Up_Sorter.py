@@ -48,8 +48,8 @@ def process_item(item, total_count, progress_bar):
 
         # process_market_cap(ocr_text, id, item_tags)
 
-        process_stock_symbol(ocr_text, id, item_tags)
-
+        process_stock_symbol(ocr_text, id, item_tags, 'country') # 'country' or 'sector'
+    
         #-----------------------------------------------------------------------------------#
 
         progress_bar.set_postfix({"Processing": f"{progress_bar.n}/{total_count}"})
@@ -61,7 +61,7 @@ def process_item(item, total_count, progress_bar):
 
 def main():
     try:
-        items = fetch_all_items_excluding_partial_tag('MC') # <----- Update string to whatever tag you want filtered out when fetching list
+        items = fetch_all_items_excluding_partial_tag('country') # <----- Update string to whatever tag you want filtered out when fetching list
         total_count = len(items)
         start_time = time.time()
 
@@ -69,7 +69,7 @@ def main():
         tqdm.set_lock(threading.Lock())
 
         with tqdm(total=total_count, desc="Processing Items", ncols=100, position=0, dynamic_ncols=True) as progress_bar:
-            with ThreadPoolExecutor(max_workers=6) as executor:
+            with ThreadPoolExecutor(max_workers=4) as executor:
                 for count, item in enumerate(items, 1):
                     executor.submit(process_item, item, total_count, progress_bar)
 
