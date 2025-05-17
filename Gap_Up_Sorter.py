@@ -24,9 +24,32 @@ def process_item(item, total_count, progress_bar):
 
         img = Image.open(full_path)
         width, height = img.size
-        right_crop = img.crop((int(width * 0.55), 0, width, height))
 
-        ocr_text = pytesseract.image_to_string(right_crop, config='--psm 6') #psm 3 for premarket volumen and gap value processing, psm 6 for market cap processing
+        #-----------------------------------------------------------------------------------#
+
+        # Define the crop box for the top left portion that includes "$ONCO"
+        # This will be an approximate region (tweak as needed)
+
+        # This is the crop box for sector/industry/country search
+        # left = 0
+        # top = 0
+        # right = int(width *0.25)
+        # bottom = int(height * .08)
+
+        # This is the crop box for other metrics on the righthand side of the image
+        left = int(width *0.55)
+        top = 0
+        right = width
+        bottom = height
+
+        #-----------------------------------------------------------------------------------#
+
+        # Perform the crop
+        cropped_img = img.crop((left, top, right, bottom))
+        # cropped_img.show()
+
+        # Run OCR on the cropped image
+        ocr_text = pytesseract.image_to_string(cropped_img, config='--psm 6') #psm 3 for premarket volume and gap value processing / psm 6 for market cap processing
 
         #-----------------------------------------------------------------------------------#
 
