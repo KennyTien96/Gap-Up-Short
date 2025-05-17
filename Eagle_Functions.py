@@ -220,25 +220,19 @@ def process_market_cap(ocr_text, id, item_tags):
 
 #--------------------------------------------------------------------------------------------------------------------#
 
-# Function that processes the stock symbol and returns sector/industry/country 
+# Function that processes the stock symbol country 
 
-def process_stock_symbol(ocr_text, id, item_tags, search):
+def process_stock_symbol_country(ocr_text, id, item_tags):
     # Extract stock symbol using regex
     symbol_match = re.search(r'\bS(\w+)\b', ocr_text)
-    print(f'Symbol match variable : {symbol_match}')
-    
+
     if symbol_match:
         symbol = symbol_match.group(1)
-        tag = get_symbol_sector_tag(symbol)
-        sector = tag.get('sector')
-        industry = tag.get('industry')
+        tag = get_symbol_info(symbol)
 
         if tag.get('country'):
             country = "HQ_" + tag.get('country')
-            if search == 'sector':
-                update_item_tags(id, sector, item_tags)
-            elif search == 'country':
-                update_item_tags(id, country, item_tags)
+            update_item_tags(id, country, item_tags)
         else:
             update_item_tags(id, "no_HQ_data", item_tags)
             return  # Exit the function early if country is missing
@@ -247,9 +241,51 @@ def process_stock_symbol(ocr_text, id, item_tags, search):
 
 #--------------------------------------------------------------------------------------------------------------------#
 
+# Function that processes the stock symbol and returns sector
+
+def process_stock_symbol_sector(ocr_text, id, item_tags):
+    # Extract stock symbol using regex
+    symbol_match = re.search(r'\bS(\w+)\b', ocr_text)
+    
+    if symbol_match:
+        symbol = symbol_match.group(1)
+        tag = get_symbol_info(symbol)
+
+        if tag.get('sector'):
+            sector = "sector_" + tag.get('sector')
+            update_item_tags(id, sector, item_tags)
+        else:
+            update_item_tags(id, "no_sector_data", item_tags)
+            return  # Exit the function early if sector is missing
+    else:
+        update_item_tags(id, "no_sector_data", item_tags)
+
+#--------------------------------------------------------------------------------------------------------------------#
+
+# Function that processes the stock symbol and returns industry
+
+def process_stock_symbol_industry(ocr_text, id, item_tags):
+    # Extract stock symbol using regex
+    symbol_match = re.search(r'\bS(\w+)\b', ocr_text)
+    
+    if symbol_match:
+        symbol = symbol_match.group(1)
+        tag = get_symbol_info(symbol)
+
+        if tag.get('industry'):
+            industry = "industry_" + tag.get('industry')
+            update_item_tags(id, industry, item_tags)
+        else:
+            update_item_tags(id, "no_industry_data", item_tags)
+            return  # Exit the function early if industry is missing
+    else:
+        update_item_tags(id, "no_industry_data", item_tags)
+
+#--------------------------------------------------------------------------------------------------------------------#
+
 # Function that tags the sector and industry and country
 
-def get_symbol_sector_tag(symbol):
+def get_symbol_info(symbol):
 
         stock = yf.Ticker(symbol)
         info = stock.info

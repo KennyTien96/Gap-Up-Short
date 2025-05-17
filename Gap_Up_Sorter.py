@@ -48,7 +48,11 @@ def process_item(item, total_count, progress_bar):
 
         # process_market_cap(ocr_text, id, item_tags)
 
-        process_stock_symbol(ocr_text, id, item_tags, 'country') # 'country' or 'sector'
+        # process_stock_symbol_country(ocr_text, id, item_tags)
+
+        # process_stock_symbol_sector(ocr_text, id, item_tags)
+
+        process_stock_symbol_industry(ocr_text, id, item_tags)
     
         #-----------------------------------------------------------------------------------#
 
@@ -61,7 +65,7 @@ def process_item(item, total_count, progress_bar):
 
 def main():
     try:
-        items = fetch_all_items_excluding_partial_tag('HQ') # <----- Update string to whatever tag you want filtered out when fetching list
+        items = fetch_all_items_excluding_partial_tag('industry') # <----- Update string to whatever tag you want filtered out when fetching list
         total_count = len(items)
         start_time = time.time()
 
