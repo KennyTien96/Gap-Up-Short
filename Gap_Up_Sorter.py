@@ -31,16 +31,16 @@ def process_item(item, total_count, progress_bar):
         # This will be an approximate region (tweak as needed)
 
         # This is the crop box for sector/industry/country search
-        # left = 0
-        # top = 0
-        # right = int(width *0.25)
-        # bottom = int(height * .08)
+        left = 0
+        top = 0
+        right = int(width *0.25)
+        bottom = int(height * .08)
 
         # This is the crop box for other metrics on the righthand side of the image
-        left = int(width *0.55)
-        top = 0
-        right = width
-        bottom = height
+        # left = int(width *0.55)
+        # top = 0
+        # right = width
+        # bottom = height
 
         #-----------------------------------------------------------------------------------#
 
@@ -49,7 +49,7 @@ def process_item(item, total_count, progress_bar):
         # cropped_img.show()
 
         # Run OCR on the cropped image
-        ocr_text = pytesseract.image_to_string(cropped_img, config='--psm 6') #psm 3 for premarket volume and gap value processing / psm 6 for market cap processing
+        ocr_text = pytesseract.image_to_string(cropped_img, config='--psm 7') # PSM 3 for premarket volume and gap value processing / PSM 6 for market cap processing / PSM 7 for sector/industry/country
 
         #-----------------------------------------------------------------------------------#
 
@@ -59,8 +59,14 @@ def process_item(item, total_count, progress_bar):
 
         # process_premarket_volume(ocr_text, id, item_tags)
 
-        process_market_cap(ocr_text, id, item_tags)
+        # process_market_cap(ocr_text, id, item_tags)
 
+        # process_stock_symbol_country(ocr_text, id, item_tags)
+
+        # process_stock_symbol_sector(ocr_text, id, item_tags)
+
+        process_stock_symbol_industry(ocr_text, id, item_tags)
+    
         #-----------------------------------------------------------------------------------#
 
         progress_bar.set_postfix({"Processing": f"{progress_bar.n}/{total_count}"})
@@ -72,7 +78,7 @@ def process_item(item, total_count, progress_bar):
 
 def main():
     try:
-        items = fetch_all_items_excluding_partial_tag('MC') # <----- Update string to whatever tag you want filtered out when fetching list
+        items = fetch_all_items_excluding_partial_tag('industry') # <----- Update string to whatever tag you want filtered out when fetching list
         total_count = len(items)
         start_time = time.time()
 
